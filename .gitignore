@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+database/local-setup.sql
+.env.rotate.tmp
+.initial-admin.txt
+npm-debug.log*

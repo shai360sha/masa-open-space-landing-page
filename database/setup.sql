@@ -1,0 +1,3 @@
+-- Run npm run setup:local from the project directory.
+-- That command generates database/local-setup.sql and the matching .env locally.
+-- Open database/local-setup.sql in MySQL Workbench and execute it.
