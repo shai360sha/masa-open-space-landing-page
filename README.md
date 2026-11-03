@@ -1,5 +1,7 @@
 # סיפורון — ניהול תלמידים ויצירת סיפורים
 
+Help language teachers manage students and create personalized stories.
+
 מערכת Web בעברית למורים לשפות. המורים מנהלים תלמידים, רמות ומילים שנלמדו, קובעים שעת סיפור יומית וצופים בהיסטוריה. מנהל המערכת מנהל חשבונות מורים וספקי AI. המערכת בנויה עם React, Node.js/Express ו־MySQL מקומי — **ללא Docker**.
 
 ## דרישות
