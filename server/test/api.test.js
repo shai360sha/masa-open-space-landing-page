@@ -94,6 +94,14 @@ test('login, role checks, and student ownership are enforced by the API', async 
   assert.match(sessionCookie, /SameSite=Strict/i);
   assert.equal((await loginResponse.json()).user.role, 'teacher');
 
+  const loopbackLoginResponse = await fetch(`${baseUrl}/api/auth/login`, {
+    method: 'POST',
+    headers: { origin: 'http://127.0.0.1:5173', 'content-type': 'application/json' },
+    body: JSON.stringify({ email: teacher.email, password: 'test-password-123' }),
+  });
+  assert.equal(loopbackLoginResponse.status, 200);
+  assert.equal(loopbackLoginResponse.headers.get('access-control-allow-origin'), 'http://127.0.0.1:5173');
+
   const studentsResponse = await fetch(`${baseUrl}/api/students`, {
     headers: { cookie: sessionCookie.split(';')[0] },
   });

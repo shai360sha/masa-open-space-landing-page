@@ -18,12 +18,27 @@ import { encryptSecret } from './security.js';
 import { startScheduler } from './scheduler.js';
 
 const port = Number(process.env.PORT || 3001);
-const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const configuredClientOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const clientOrigins = [...new Set(configuredClientOrigins.flatMap((origin) => {
+  try {
+    const url = new URL(origin);
+    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+      url.hostname = url.hostname === 'localhost' ? '127.0.0.1' : 'localhost';
+      return [origin, url.origin];
+    }
+  } catch {
+    return [origin];
+  }
+  return [origin];
+}))];
 
 export function createApp() {
   const app = express();
   app.use(helmet());
-  app.use(cors({ origin: clientOrigin, credentials: true }));
+  app.use(cors({ origin: clientOrigins, credentials: true }));
   app.use('/api', (_request, response, next) => {
     response.setHeader('Cache-Control', 'no-store');
     next();
@@ -36,7 +51,7 @@ export function createApp() {
   app.use(cookieParser());
   app.use((request, _response, next) => {
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method) && request.headers.origin) {
-      if (request.headers.origin !== clientOrigin) {
+      if (!clientOrigins.includes(request.headers.origin)) {
         next(new HttpError(403, 'מקור הבקשה אינו מורשה.'));
         return;
       }
@@ -95,18 +110,23 @@ function validateConfiguration() {
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
     throw new Error('PORT must be a valid TCP port.');
   }
-  let origin;
-  try {
-    origin = new URL(clientOrigin);
-  } catch {
-    throw new Error('CLIENT_ORIGIN must be a valid localhost or HTTPS origin.');
+  if (configuredClientOrigins.length === 0) {
+    throw new Error('CLIENT_ORIGIN must contain at least one valid origin.');
   }
-  if (
-    origin.origin !== clientOrigin
-    || (origin.protocol !== 'https:' && origin.hostname !== 'localhost' && origin.hostname !== '127.0.0.1')
-    || origin.username || origin.password
-  ) {
-    throw new Error('CLIENT_ORIGIN must be a localhost or HTTPS origin.');
+  for (const clientOrigin of configuredClientOrigins) {
+    let origin;
+    try {
+      origin = new URL(clientOrigin);
+    } catch {
+      throw new Error('CLIENT_ORIGIN must contain valid localhost or HTTPS origins.');
+    }
+    if (
+      origin.origin !== clientOrigin
+      || (origin.protocol !== 'https:' && origin.hostname !== 'localhost' && origin.hostname !== '127.0.0.1')
+      || origin.username || origin.password
+    ) {
+      throw new Error('CLIENT_ORIGIN must contain localhost or HTTPS origins.');
+    }
   }
   if (!process.env.SESSION_SECRET || Buffer.byteLength(process.env.SESSION_SECRET) < 32) {
     throw new Error('SESSION_SECRET must contain at least 32 bytes.');
