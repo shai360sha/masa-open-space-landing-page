@@ -8,7 +8,7 @@ import { hashPassword } from '../src/security.js';
 
 process.env.SESSION_SECRET = randomBytes(32).toString('base64url');
 process.env.ENCRYPTION_KEY = randomBytes(32).toString('base64');
-process.env.CLIENT_ORIGIN = 'http://localhost:5173';
+process.env.CLIENT_ORIGIN = 'http://localhost:5173,http://localhost:5174';
 
 test('login, role checks, and student ownership are enforced by the API', async (context) => {
   const passwordHash = await hashPassword('test-password-123');
@@ -101,6 +101,14 @@ test('login, role checks, and student ownership are enforced by the API', async 
   });
   assert.equal(loopbackLoginResponse.status, 200);
   assert.equal(loopbackLoginResponse.headers.get('access-control-allow-origin'), 'http://127.0.0.1:5173');
+
+  const fallbackPortLoginResponse = await fetch(`${baseUrl}/api/auth/login`, {
+    method: 'POST',
+    headers: { origin: 'http://localhost:5174', 'content-type': 'application/json' },
+    body: JSON.stringify({ email: teacher.email, password: 'test-password-123' }),
+  });
+  assert.equal(fallbackPortLoginResponse.status, 200);
+  assert.equal(fallbackPortLoginResponse.headers.get('access-control-allow-origin'), 'http://localhost:5174');
 
   const studentsResponse = await fetch(`${baseUrl}/api/students`, {
     headers: { cookie: sessionCookie.split(';')[0] },

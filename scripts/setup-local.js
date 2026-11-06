@@ -72,7 +72,7 @@ async function main() {
       `SESSION_SECRET=${sessionSecret}`,
       `ENCRYPTION_KEY=${encryptionKey}`,
       'PORT=3001',
-      'CLIENT_ORIGIN=http://localhost:5173',
+      'CLIENT_ORIGIN=http://localhost:5173,http://localhost:5174',
       '',
     ].join('\n');
     await writeFile(envPath, env, { encoding: 'utf8', flag: 'wx', mode: 0o600 });
