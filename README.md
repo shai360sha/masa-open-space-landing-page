@@ -1,15 +1,19 @@
-# סיפורון — ניהול תלמידים ויצירת סיפורים
+# masa-open-space-landing-page
+
+Landing page of Masa Open Space gym for Mitzpe Fomo and more.
+
+## סיפורון — ניהול תלמידים ויצירת סיפורים
 
 Help language teachers manage students and create personalized stories.
 
 מערכת Web בעברית למורים לשפות. המורים מנהלים תלמידים, רמות ומילים שנלמדו, קובעים שעת סיפור יומית וצופים בהיסטוריה. מנהל המערכת מנהל חשבונות מורים וספקי AI. המערכת בנויה עם React, Node.js/Express ו־MySQL מקומי — **ללא Docker**.
 
-## דרישות
+### דרישות
 
 - Node.js בגרסת LTS ו־npm.
 - MySQL Server 8.0 וממשק ניהול כגון MySQL Workbench.
 
-## הגדרת MySQL במחשב מקומי
+### הגדרת MySQL במחשב מקומי
 
 1. התקינו והפעילו MySQL Server 8.0. התקינו את תלותי הפרויקט וצרו קובצי הגדרה עם סודות אקראיים מקומיים:
 
@@ -36,7 +40,7 @@ npm run setup:local -- --refresh-sql --rotate-password
 
 הקבצים `.env` ו־`database/local-setup.sql` מכילים סודות, נוצרים מקומית ומוחרגים מ־Git. אין לשתף אותם. שמרו גיבוי בטוח של `ENCRYPTION_KEY`; בלעדיו לא ניתן לפענח מפתחות API שנשמרו.
 
-## אתחול והפעלה
+### אתחול והפעלה
 
 ```powershell
 npm run admin:create:local
@@ -49,7 +53,7 @@ npm run dev
 
 השרת מאשר בקשות רק ממקורות שמוגדרים ב־`CLIENT_ORIGIN`. אפשר להגדיר כמה מקורות מופרדים בפסיקים; ב־localhost שני שמות ה־loopback מותרים אוטומטית. בפריסה יש להגדיר את המקור המדויק של ממשק המשתמש (HTTPS), למשל `CLIENT_ORIGIN=https://app.example.com`, ולהפעיל מחדש את השרת.
 
-## תכונות
+### תכונות
 
 - **מורה:** ניהול תלמידים, שפה, רמה, אזור זמן, שעת יצירה, מילים שנלמדו, צפייה בסיפורים ויצירה ידנית.
 - **מנהל:** יצירה והשבתה של חשבונות מורים, תמונת מצב ויומן פעילות.
@@ -59,7 +63,7 @@ npm run dev
 
 בשלב הנוכחי אין שליחת WhatsApp/SMS, תשלומים או אפליקציה למובייל.
 
-## פקודות פיתוח
+### פקודות פיתוח
 
 ```powershell
 npm run dev
